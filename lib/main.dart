@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'login.dart';
-import 'home.dart';
+import 'scan.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'VScan',
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Montserrat'),
-      home: const MyHomePage(),
+      home: const ScanPage(),
     );
   }
 }
