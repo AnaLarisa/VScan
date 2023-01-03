@@ -1,19 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'menu.dart';
+import 'details.dart';
 
-class DetailsPage extends StatefulWidget {
-  const DetailsPage({Key? key /*, required this.username*/}) : super(key: key);
+class ScanPage extends StatefulWidget {
+  const ScanPage({Key? key /*, required this.username*/}) : super(key: key);
 
   //final String username;
 
   @override
-  State<DetailsPage> createState() => _DetailsPageState();
+  State<ScanPage> createState() => _ScanPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
+class _ScanPageState extends State<ScanPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  //String initials = '';
 
   String getInitials(String username) => username.isNotEmpty
       ? username.trim().split(' ').map((l) => l[0]).take(2).join()
@@ -34,15 +35,26 @@ class _DetailsPageState extends State<DetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text('Cereal Bio | Burger vegetal bio cu soia, ceapa si grau 160g'),
-          Card(
-            child: Text(
-                'Ingrediente\nProteine din SOIA texturate rehidratate 53.3%, ceapa 29.8%, PESMET 11.9%(faina de GRAU, apa, sare, drojdie), gluten de GRAU 7%, ulei de floarea soarelui oleic, patrunjel, ulei de floarea soarelui, otet de cidru, usturoi, sare de mare, exatract de drojdie, rozmarin, zahar din trestie, piper.\nAlergeni\nPesmet, grau, soia. Fabricat intr-un atelier care se foloseste telina, lapte, susan, nuci si ou.'),
+      body: Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromRGBO(99, 163, 117, 1),
+            fixedSize: const Size(200, 60),
           ),
-        ],
+          onPressed: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => const DetailsPage(),
+            ));
+          },
+          child: const Text(
+            'Scan barcode',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              fontFamily: 'Montserrat',
+            ),
+          ),
+        ),
       ),
       floatingActionButton: SizedBox(
         height: 60,
@@ -59,7 +71,7 @@ class _DetailsPageState extends State<DetailsPage> {
               size: 60,
             )),
       ),
-      endDrawer: Menu(CurrentPage.details),
+      endDrawer: Menu(CurrentPage.scan),
     );
   }
 
