@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -47,29 +48,35 @@ class MyDrawerHeader extends StatefulWidget {
 class _MyDrawerHeaderState extends State<MyDrawerHeader> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.25,
-      padding: const EdgeInsets.all(0),
-      margin: const EdgeInsets.all(0),
-      child: const UserAccountsDrawerHeader(
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Color.fromRGBO(213, 122, 102, 1),
-          child: Text(
-            'YN',
-            style: TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(13, 31, 45, 1),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LogInPage()));
+      },
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.25,
+        padding: const EdgeInsets.all(0),
+        margin: const EdgeInsets.all(0),
+        child: const UserAccountsDrawerHeader(
+          currentAccountPicture: CircleAvatar(
+            backgroundColor: Color.fromRGBO(213, 122, 102, 1),
+            child: Text(
+              'YN',
+              style: TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(13, 31, 45, 1),
+              ),
             ),
           ),
-        ),
-        accountEmail: Text('your.name@example.com'),
-        accountName: Text(
-          'Your Name',
-          style: TextStyle(fontSize: 20.0),
-        ),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(13, 31, 45, 1),
+          accountEmail: Text('tzanca.uraganu@example.com'),
+          accountName: Text(
+            'Numele meu numele meu',
+            style: TextStyle(fontSize: 20.0),
+          ),
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(13, 31, 45, 1),
+          ),
         ),
       ),
     );
@@ -86,13 +93,20 @@ class MyDrawerList extends StatelessWidget {
     }
 
     void goToPage(CurrentPage pageToGo) {
-      print(pageToGo);
-
       if (pageToGo != currentPage) {
         switch (pageToGo) {
           case CurrentPage.account:
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const LogInPage()));
+            FirebaseAuth.instance.authStateChanges().listen((User? user) {
+              if (user == null) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LogInPage()));
+              } else {
+                ////to be modified in doNothing
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LogOutPage()));
+              }
+            });
+
             break;
           case CurrentPage.favourites:
             Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -114,7 +128,7 @@ class MyDrawerList extends StatelessWidget {
       }
     }
 
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.75,
       child: ListView(
         padding: const EdgeInsets.all(0),
@@ -126,7 +140,7 @@ class MyDrawerList extends StatelessWidget {
               size: 30,
               color: Colors.white,
             ),
-            title: const Text('Favourites',
+            title: const Text('Favorite',
                 style: TextStyle(fontSize: 18.0, color: Colors.white)),
             onTap: (() => goToPage(CurrentPage.favourites)),
           ),
@@ -136,12 +150,12 @@ class MyDrawerList extends StatelessWidget {
               size: 30,
               color: Colors.white,
             ),
-            title: const Text('Scan',
+            title: const Text('Scanare',
                 style: TextStyle(fontSize: 18.0, color: Colors.white)),
             onTap: (() => goToPage(CurrentPage.scan)),
           ),
-          Container(
-            height: 450,
+          const SizedBox(
+            height: 480,
           ),
           ListTile(
             leading: const Icon(
@@ -149,7 +163,7 @@ class MyDrawerList extends StatelessWidget {
               size: 30,
               color: Colors.white,
             ),
-            title: const Text('Log Out',
+            title: const Text('Deconectare cont',
                 style: TextStyle(fontSize: 18.0, color: Colors.white)),
             onTap: (() => goToPage(CurrentPage.logOut)),
           ),

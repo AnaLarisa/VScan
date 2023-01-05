@@ -39,7 +39,7 @@ class _ScanPageState extends State<ScanPage> {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(99, 163, 117, 1),
-            fixedSize: const Size(200, 60),
+            fixedSize: const Size(300, 60),
           ),
           onPressed: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -47,7 +47,7 @@ class _ScanPageState extends State<ScanPage> {
             ));
           },
           child: const Text(
-            'Scan barcode',
+            'Scanează un cod de bare',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "409787534570",
+    "project_id": "vscan-58033",
+    "storage_bucket": "vscan-58033.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409787534570:android:8d4da3b3c801174325db93",
+        "android_client_info": {
+          "package_name": "com.example.vscan1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409787534570-g36jc00k0c1kekusfnhlugeqj9p1heht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxsH4Mam9pas2cMK9t1dPh7mnJ-uWTQrc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409787534570-g36jc00k0c1kekusfnhlugeqj9p1heht.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

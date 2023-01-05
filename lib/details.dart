@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'menu.dart';
@@ -36,11 +35,28 @@ class _DetailsPageState extends State<DetailsPage> {
       key: _scaffoldKey,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text('Cereal Bio | Burger vegetal bio cu soia, ceapa si grau 160g'),
-          Card(
-            child: Text(
-                'Ingrediente\nProteine din SOIA texturate rehidratate 53.3%, ceapa 29.8%, PESMET 11.9%(faina de GRAU, apa, sare, drojdie), gluten de GRAU 7%, ulei de floarea soarelui oleic, patrunjel, ulei de floarea soarelui, otet de cidru, usturoi, sare de mare, exatract de drojdie, rozmarin, zahar din trestie, piper.\nAlergeni\nPesmet, grau, soia. Fabricat intr-un atelier care se foloseste telina, lapte, susan, nuci si ou.'),
+        children: <Widget>[
+          Container(
+              padding: const EdgeInsets.fromLTRB(22, 30, 22, 10),
+              child: Text(
+                  'Cereal Bio | Burger vegetal bio cu soia, ceapa si grau 160g',
+                  style: TextStyle(color: Colors.black))),
+          Container(
+            height: 600,
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: const Color.fromRGBO(99, 163, 117, 1),
+                borderRadius: BorderRadius.circular(20)),
+            child: ListView(children: const [
+              Card(
+                margin: EdgeInsets.all(20.0),
+                color: Color.fromRGBO(99, 163, 117, 1),
+                child: Text(
+                  'Ingrediente\nProteine din SOIA texturate rehidratate 53.3%, ceapa 29.8%, PESMET 11.9%(faina de GRAU, apa, sare, drojdie), gluten de GRAU 7%, ulei de floarea soarelui oleic, patrunjel, ulei de floarea soarelui, otet de cidru, usturoi, sare de mare, exatract de drojdie, rozmarin, zahar din trestie, piper.\nAlergeni\nPesmet, grau, soia. Fabricat intr-un atelier care se foloseste telina, lapte, susan, nuci si ou.',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ]),
           ),
         ],
       ),
