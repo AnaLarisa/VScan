@@ -80,7 +80,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
             height: 250,
             child: Container(
               margin: const EdgeInsets.all(25),
-              color: Colors.green,
+              color: const Color.fromRGBO(99, 163, 117, 1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

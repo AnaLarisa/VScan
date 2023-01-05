@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:toast/toast.dart';
+//import 'package:firebase_auth_email/main.dart';
+//import 'package:firebase_auth_email/utils/utils.dart';
 
 import 'scan.dart';
-import 'sign_in.dart';
+import 'log_in.dart';
 
-class LogInPage extends StatefulWidget {
-  const LogInPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<LogInPage> createState() => _LogInPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _LogInPageState extends State<LogInPage> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _SignInPageState extends State<SignInPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -30,13 +31,13 @@ class _LogInPageState extends State<LogInPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
+            const Padding(
+              padding: EdgeInsets.only(top: 60.0),
               child: Center(
-                child: Container(
+                child: SizedBox(
                     width: 200,
                     height: 400,
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'VScan',
                         style: TextStyle(
@@ -49,27 +50,26 @@ class _LogInPageState extends State<LogInPage> {
               ),
             ),
             Padding(
-              //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                controller: _emailController,
+                controller: emailController,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    labelText: 'Email',
+                    labelText: 'E-mail',
                     hintText: 'Introdu o adresă validă de e-mail'),
               ),
             ),
             Padding(
               padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 40),
+                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                controller: _passwordController,
-                textInputAction: TextInputAction.next,
+                controller: passwordController,
                 obscureText: true,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                     fillColor: Color.fromRGBO(13, 31, 45, 1),
                     border: OutlineInputBorder(
@@ -79,30 +79,49 @@ class _LogInPageState extends State<LogInPage> {
                     hintText: 'Introdu o parolă puternică'),
               ),
             ),
+            const Padding(
+              padding:
+                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 40),
+              child: TextField(
+                obscureText: true,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                    fillColor: Color.fromRGBO(13, 31, 45, 1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    labelText: 'Parolă',
+                    hintText: 'Re-introdu parola aleasă'),
+              ),
+            ),
             Container(
               height: 50,
               width: 250,
               decoration: BoxDecoration(
-                  color: Color.fromRGBO(13, 31, 45, 1),
+                  color: const Color.fromRGBO(13, 31, 45, 1),
                   borderRadius: BorderRadius.circular(20)),
               child: TextButton(
-                onPressed: signIn,
+                onPressed: signUp,
+                // () {
+                //   Navigator.push(
+                //       context, MaterialPageRoute(builder: (_) => ScanPage()));
+                // },
                 child: const Text(
-                  'Autentificare',
+                  'Înregistrează-te',
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
             ),
             const SizedBox(
-              height: 150,
+              height: 75,
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const SignInPage()));
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LogInPage()));
               },
               child: const Text(
-                'Crează-ți un cont nou',
+                'Ai deja un cont? Autentifică-te',
                 style: TextStyle(
                     color: Color.fromRGBO(13, 31, 45, 1),
                     decoration: TextDecoration.underline),
@@ -114,25 +133,10 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  void showLogInErrorToast(BuildContext context) {
-    ToastContext().init(context);
-    Toast.show("E-mail/parolă incorectă",
-        duration: Toast.lengthShort, gravity: Toast.bottom);
-  }
-
-  Future signIn() async {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    )
-        .then((value) {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => ScanPage()));
-    }).catchError((error) {
-      showLogInErrorToast(context);
-      _emailController.clear();
-      _passwordController.clear();
-    });
+  Future signUp() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
   }
 }
