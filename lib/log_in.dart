@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:toast/toast.dart';
+import 'package:vscan1/main.dart';
 
 import 'scan.dart';
 import 'sign_in.dart';
@@ -59,7 +60,7 @@ class _LogInPageState extends State<LogInPage> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     labelText: 'Email',
-                    hintText: 'Introdu o adresă validă de e-mail'),
+                    hintText: 'Introdu o adresa vaida de e-mail'),
               ),
             ),
             Padding(
