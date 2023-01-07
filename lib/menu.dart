@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,9 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'log_in.dart';
 import 'favourites.dart';
 import 'scan.dart';
-import 'log_out.dart';
 
-enum CurrentPage { account, favourites, scan, details, logOut }
+enum CurrentPage { account, favourites, scan, details }
 
 CurrentPage currentPage = CurrentPage.scan;
 
@@ -27,11 +28,11 @@ class MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Color.fromRGBO(13, 31, 45, 1),
+      backgroundColor: const Color.fromRGBO(13, 31, 45, 1),
       child: Column(
-        children: const <Widget>[
+        children: <Widget>[
           MyDrawerHeader(),
-          MyDrawerList(),
+          const MyDrawerList(),
         ],
       ),
     );
@@ -39,7 +40,7 @@ class MenuState extends State<Menu> {
 }
 
 class MyDrawerHeader extends StatefulWidget {
-  const MyDrawerHeader({super.key});
+  MyDrawerHeader({super.key});
 
   @override
   State<MyDrawerHeader> createState() => _MyDrawerHeaderState();
@@ -48,6 +49,9 @@ class MyDrawerHeader extends StatefulWidget {
 class _MyDrawerHeaderState extends State<MyDrawerHeader> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final userEmail = user?.email;
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushReplacement(
@@ -57,24 +61,16 @@ class _MyDrawerHeaderState extends State<MyDrawerHeader> {
         height: MediaQuery.of(context).size.height * 0.25,
         padding: const EdgeInsets.all(0),
         margin: const EdgeInsets.all(0),
-        child: const UserAccountsDrawerHeader(
-          currentAccountPicture: CircleAvatar(
-            backgroundColor: Color.fromRGBO(213, 122, 102, 1),
-            child: Text(
-              'YN',
-              style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(13, 31, 45, 1),
-              ),
-            ),
-          ),
-          accountEmail: Text('tzanca.uraganu@example.com'),
+        child: UserAccountsDrawerHeader(
+          currentAccountPicture: const CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: Image(image: AssetImage('assets/leaf.png'))),
+          accountEmail: const Text('       '),
           accountName: Text(
-            'Numele meu numele meu',
-            style: TextStyle(fontSize: 20.0),
+            userEmail ?? "Conectare",
+            style: const TextStyle(fontSize: 20.0),
           ),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color.fromRGBO(13, 31, 45, 1),
           ),
         ),
@@ -92,20 +88,17 @@ class MyDrawerList extends StatelessWidget {
       Navigator.of(context).pop();
     }
 
+    void signOut() {
+      FirebaseAuth.instance.signOut();
+    }
+
     void goToPage(CurrentPage pageToGo) {
       if (pageToGo != currentPage) {
         switch (pageToGo) {
           case CurrentPage.account:
-            FirebaseAuth.instance.authStateChanges().listen((User? user) {
-              if (user == null) {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LogInPage()));
-              } else {
-                ////to be modified in doNothing
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LogOutPage()));
-              }
-            });
+            signOut();
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LogInPage()));
 
             break;
           case CurrentPage.favourites:
@@ -114,11 +107,7 @@ class MyDrawerList extends StatelessWidget {
             break;
           case CurrentPage.scan:
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScanPage()));
-            break;
-          case CurrentPage.logOut:
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const LogOutPage()));
+                MaterialPageRoute(builder: (context) => ScanPage()));
             break;
           default:
             break;
@@ -126,6 +115,11 @@ class MyDrawerList extends StatelessWidget {
       } else {
         closeEndDrawer();
       }
+    }
+
+    void signOutAndRefresh() {
+      signOut();
+      Navigator.pop(context);
     }
 
     return SizedBox(
@@ -165,7 +159,7 @@ class MyDrawerList extends StatelessWidget {
             ),
             title: const Text('Deconectare cont',
                 style: TextStyle(fontSize: 18.0, color: Colors.white)),
-            onTap: (() => goToPage(CurrentPage.logOut)),
+            onTap: signOutAndRefresh,
           ),
         ],
       ),

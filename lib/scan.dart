@@ -1,34 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'menu.dart';
 import 'details.dart';
 
-class ScanPage extends StatefulWidget {
-  const ScanPage({Key? key /*, required this.username*/}) : super(key: key);
+class ScanPage extends StatelessWidget {
+  ScanPage({Key? key /*, required this.username*/}) : super(key: key);
 
   //final String username;
 
-  @override
-  State<ScanPage> createState() => _ScanPageState();
-}
-
-class _ScanPageState extends State<ScanPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  //String initials = '';
-
-  String getInitials(String username) => username.isNotEmpty
-      ? username.trim().split(' ').map((l) => l[0]).take(2).join()
-      : '';
+  final user = FirebaseAuth.instance.currentUser;
 
   void _openEndDrawer() {
     _scaffoldKey.currentState!.openEndDrawer();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    //setState(() => initials = getInitials('Lana Del Rey'));
   }
 
   @override
@@ -51,7 +36,7 @@ class _ScanPageState extends State<ScanPage> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              fontFamily: 'Montserrat',
+              //fontFamily: 'Montserrat',
             ),
           ),
         ),
@@ -74,6 +59,4 @@ class _ScanPageState extends State<ScanPage> {
       endDrawer: Menu(CurrentPage.scan),
     );
   }
-
-  openMenu() {}
 }

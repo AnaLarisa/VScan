@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_auth_email/main.dart';
-//import 'package:firebase_auth_email/utils/utils.dart';
+import 'package:toast/toast.dart';
+import 'package:vscan1/scan.dart';
 
-import 'scan.dart';
 import 'log_in.dart';
 
 class SignInPage extends StatefulWidget {
@@ -14,13 +13,15 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _secondPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _secondPasswordController.dispose();
     super.dispose();
   }
 
@@ -52,7 +53,7 @@ class _SignInPageState extends State<SignInPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                controller: emailController,
+                controller: _emailController,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(
@@ -63,11 +64,11 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 15, bottom: 0),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                controller: passwordController,
+                controller: _passwordController,
                 obscureText: true,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -79,13 +80,14 @@ class _SignInPageState extends State<SignInPage> {
                     hintText: 'Introdu o parolă puternică'),
               ),
             ),
-            const Padding(
-              padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 40),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 15, bottom: 40),
               child: TextField(
+                controller: _secondPasswordController,
                 obscureText: true,
                 textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     fillColor: Color.fromRGBO(13, 31, 45, 1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -102,10 +104,6 @@ class _SignInPageState extends State<SignInPage> {
                   borderRadius: BorderRadius.circular(20)),
               child: TextButton(
                 onPressed: signUp,
-                // () {
-                //   Navigator.push(
-                //       context, MaterialPageRoute(builder: (_) => ScanPage()));
-                // },
                 child: const Text(
                   'Înregistrează-te',
                   style: TextStyle(color: Colors.white, fontSize: 25),
@@ -133,10 +131,33 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  void showLogInErrorToastAndClearFields(
+      BuildContext context, String errorMessage) {
+    ToastContext().init(context);
+    Toast.show(errorMessage, duration: Toast.lengthLong, gravity: Toast.bottom);
+    _emailController.clear();
+    _passwordController.clear();
+    _secondPasswordController.clear();
+  }
+
   Future signUp() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+    if (_passwordController.text == _secondPasswordController.text) {
+    } else {
+      showLogInErrorToastAndClearFields(
+          context, "Parola introdusă nu este aceeași in ambele câmpuri");
+    }
+
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    )
+        .then((value) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => ScanPage()));
+    }).catchError((error) {
+      showLogInErrorToastAndClearFields(
+          context, "Adresa de e-mail/ parola e invalidă");
+    });
   }
 }
