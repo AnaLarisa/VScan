@@ -42,25 +42,27 @@ class _DetailsPageState extends State<DetailsPage> {
     }
   }
 
-  // Future setProduct() async {
-  //   product = await getProduct(data);
-  // }
-
   Future<Product> _setProduct() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 4));
     return product;
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    fetchProductData().then((result) {
+      setState(() {
+        data = result;
+        getProduct(data).then((value) => product = value);
+        //_setProduct().then((value) => {product = value});
+      });
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    fetchProductData().then((result) {
-      setState(() {
-        data = result;
-        product = getProduct(data);
-      });
-      _setProduct().then((value) => {product = value});
-    });
   }
 
   @override
@@ -68,21 +70,20 @@ class _DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       key: widget._scaffoldKey,
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-                padding: const EdgeInsets.fromLTRB(22, 50, 22, 10),
-                child: Text(product.productName,
-                    style: const TextStyle(color: Colors.black))),
-            FutureBuilder(
-                future: _setProduct(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return const Text("An error occurred");
-                    } else {
-                      return Container(
+        child: FutureBuilder(
+            future: _setProduct(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return const Text("An error occurred");
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(22, 50, 22, 10),
+                          child: justBoldText(product.productName)),
+                      Container(
                         height: 650,
                         width:
                             (-20.0 + MediaQuery.of(context).size.width - 20.0),
@@ -94,39 +95,47 @@ class _DetailsPageState extends State<DetailsPage> {
                           Container(
                             margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                             child: product.vegan == false
-                                ? Row(
-                                    children: const [
-                                      Expanded(
-                                          flex: 2,
-                                          child: Icon(
-                                            Icons.warning_rounded,
-                                            size: 30,
-                                            color: Colors.white,
-                                          )),
-                                      Expanded(
-                                        flex: 8,
-                                        child: Text(
-                                            "Produsul NU este vegan conform bazei noastre de date.",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black)),
-                                      )
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Expanded(
+                                              flex: 2,
+                                              child: Icon(
+                                                Icons.warning_rounded,
+                                                size: 30,
+                                                color: Colors.white,
+                                              )),
+                                          Expanded(
+                                            flex: 8,
+                                            child: justBoldText(
+                                              "Produsul NU este vegan conform bazei noastre de date.",
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            20, 20, 20, 10),
+                                        child: formatText(
+                                            "Ingrediente de origine animala: ",
+                                            product.ingredientsNotVegan),
+                                      ),
                                     ],
                                   )
                                 : Row(
-                                    children: const [
-                                      Expanded(
+                                    children: [
+                                      const Expanded(
                                           flex: 2,
                                           child: Image(
                                               image: AssetImage(
                                                   'assets/vegan.png'))),
                                       Expanded(
                                         flex: 8,
-                                        child: Text("Produsul este VEGAN!",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.black)),
-                                      )
+                                        child: justBoldText(
+                                            "Produsul este VEGAN!"),
+                                      ),
                                     ],
                                   ),
                           ),
@@ -139,10 +148,8 @@ class _DetailsPageState extends State<DetailsPage> {
                                   margin:
                                       const EdgeInsets.fromLTRB(20, 20, 20, 10),
                                   //color: Color.fromRGBO(99, 163, 117, 1),
-                                  child: Text(
-                                    "Ingrediente:\n${product.ingredientString}",
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
+                                  child: formatText("Ingrediente:\n",
+                                      product.ingredientString),
                                 ),
                               ),
                               Expanded(
@@ -161,10 +168,8 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                            child: Text(
-                              "Ambalaj: ${product.environmentalImpact}",
-                              style: const TextStyle(color: Colors.black),
-                            ),
+                            child: formatText(
+                                "Ambalaj: ", product.environmentalImpact),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -181,30 +186,29 @@ class _DetailsPageState extends State<DetailsPage> {
                                 ),
                                 Expanded(
                                   flex: 5,
-                                  child: Text(
-                                    product.nutriScore.isNotEmpty
-                                        ? "    Nutriscore : ${product.nutriScore}"
-                                        : "    Nutriscore indisponibil.",
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w800),
-                                  ),
+                                  child: product.nutriScore.isNotEmpty
+                                      ? formatText("    Nutriscore: ",
+                                          product.nutriScore)
+                                      : justBoldText(
+                                          "    Nutriscore indisponibil."),
                                 ),
                               ],
                             ),
                           ),
                         ]),
-                      );
-                    }
-                  } else {
-                    // The image is still being loaded
-                    return const CircularProgressIndicator(
-                      color: Colors.black,
-                    );
-                  }
-                }),
-          ],
-        ),
+                      )
+                    ],
+                  );
+                }
+              } else {
+                // The image is still being loaded
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                );
+              }
+            }),
       ),
       floatingActionButton: SizedBox(
         height: 60,
@@ -226,171 +230,20 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder(
-//         future: _setProduct(),
-//         builder: (BuildContext context, AsyncSnapshot snapshot) {
-//           if (snapshot.connectionState == ConnectionState.done) {
-//             if (snapshot.hasError) {
-//               return const Text("An error occurred");
-//             } else {
-//               return Scaffold(
-//                 key: widget._scaffoldKey,
-//                 body: SingleChildScrollView(
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: <Widget>[
-//                       Container(
-//                           padding: const EdgeInsets.fromLTRB(22, 50, 22, 10),
-//                           child: Text(product.productName,
-//                               style: const TextStyle(color: Colors.black))),
-//                       Container(
-//                         height: 650,
-//                         width:
-//                             (-20.0 + MediaQuery.of(context).size.width - 20.0),
-//                         margin: const EdgeInsets.all(20),
-//                         decoration: BoxDecoration(
-//                             color: const Color.fromRGBO(99, 163, 117, 1),
-//                             borderRadius: BorderRadius.circular(20)),
-//                         child: ListView(children: [
-//                           Container(
-//                             margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-//                             child: product.vegan == false
-//                                 ? const Text(
-//                                     "Produsul nu este vegan conform bazei noastre de date.",
-//                                     style: TextStyle(color: Colors.black),
-//                                   )
-//                                 : Row(
-//                                     children: const [
-//                                       Expanded(
-//                                           flex: 2,
-//                                           child: Image(
-//                                               image: AssetImage(
-//                                                   'assets/vegan.png'))),
-//                                       Expanded(
-//                                         flex: 8,
-//                                         child: Text("Produsul este VEGAN!",
-//                                             style: TextStyle(
-//                                                 fontWeight: FontWeight.w800,
-//                                                 color: Colors.black)),
-//                                       )
-//                                     ],
-//                                   ),
-//                           ),
-//                           Row(
-//                             crossAxisAlignment: CrossAxisAlignment.center,
-//                             children: [
-//                               Expanded(
-//                                 flex: 6,
-//                                 child: Container(
-//                                   margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-//                                   //color: Color.fromRGBO(99, 163, 117, 1),
-//                                   child: Text(
-//                                     "Ingrediente:\n${product.ingredientString}",
-//                                     style: const TextStyle(color: Colors.black),
-//                                   ),
-//                                 ),
-//                               ),
-//                               Expanded(
-//                                 flex: 4,
-//                                 child: Card(
-//                                   margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
-//                                   color: Color.fromRGBO(99, 163, 117, 1),
-//                                   child: product.productImage != ""
-//                                       ? Image.network(product.productImage,
-//                                           fit: BoxFit.fitHeight)
-//                                       : Image.asset('unknownProduct.png'),
+Widget formatText(String title, String content) {
+  return RichText(
+      text: TextSpan(
+          style: const TextStyle(color: Colors.black), //apply style to all
+          children: [
+        TextSpan(
+            text: title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        TextSpan(text: content),
+      ]));
+}
 
-//                                   // child: FutureBuilder(
-//                                   //   future: _getImage(),
-//                                   //   builder:
-//                                   //       (BuildContext context, AsyncSnapshot snapshot) {
-//                                   //     if (snapshot.connectionState ==
-//                                   //         ConnectionState.done) {
-//                                   //       if (snapshot.hasError) {
-//                                   //         return const Text("An error occurred");
-//                                   //       } else if (snapshot.data != "") {
-//                                   //         return Image.network(snapshot.data,
-//                                   //             fit: BoxFit.fitHeight);
-//                                   //       } else {
-//                                   //         return Image.asset('unknownProduct.png');
-//                                   //       }
-//                                   //     } else {
-//                                   //       // The image is still being loaded
-//                                   //       return const CircularProgressIndicator(
-//                                   //         color: Colors.black,
-//                                   //       );
-//                                   //     }
-//                                   //   },
-//                                   // ),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                           Container(
-//                             margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-//                             child: Text(
-//                               "Ambalaj: ${product.environmentalImpact}",
-//                               style: const TextStyle(color: Colors.black),
-//                             ),
-//                           ),
-//                           Container(
-//                             margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-//                             child: Row(
-//                               crossAxisAlignment: CrossAxisAlignment.center,
-//                               children: [
-//                                 Expanded(
-//                                   flex: 5,
-//                                   child: product.nutriScore.isNotEmpty
-//                                       ? Image.asset(
-//                                           'assets/nutriscore/nutriscore${product.nutriScore}.png',
-//                                           fit: BoxFit.fitHeight)
-//                                       : const Icon(Icons.question_mark_rounded),
-//                                 ),
-//                                 Expanded(
-//                                   flex: 5,
-//                                   child: Text(
-//                                     product.nutriScore.isNotEmpty
-//                                         ? "Nutriscore : ${product.nutriScore}"
-//                                         : "Nutriscore indisponibil.",
-//                                     style: const TextStyle(
-//                                         color: Colors.black,
-//                                         fontWeight: FontWeight.w800),
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ]),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 floatingActionButton: SizedBox(
-//                   height: 60,
-//                   width: 60,
-//                   child: FloatingActionButton(
-//                       shape: const BeveledRectangleBorder(),
-//                       tooltip: 'Menu',
-//                       hoverElevation: 60,
-//                       backgroundColor: Colors.white,
-//                       foregroundColor: const Color.fromRGBO(13, 31, 45, 1),
-//                       onPressed: _openEndDrawer,
-//                       child: const Icon(
-//                         Icons.menu,
-//                         size: 60,
-//                       )),
-//                 ),
-//                 endDrawer: Menu(CurrentPage.details),
-//               );
-//             }
-//           } else {
-//             // The image is still being loaded
-//             return const CircularProgressIndicator(
-//               color: Colors.black,
-//             );
-//           }
-//         });
-//   }
-// }
+Widget justBoldText(String text) {
+  return Text(
+    text,
+    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+  );
+}
