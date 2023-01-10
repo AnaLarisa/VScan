@@ -4,44 +4,34 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 
 class FavouritesPage extends StatefulWidget {
-  const FavouritesPage({Key? key /*, required this.username*/})
-      : super(key: key);
+  FavouritesPage({Key? key}) : super(key: key);
 
-  //final String username;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   State<FavouritesPage> createState() => _FavouritesPageState();
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  //String initials = '';
-
   String getInitials(String username) => username.isNotEmpty
       ? username.trim().split(' ').map((l) => l[0]).take(2).join()
       : '';
 
   void _openEndDrawer() {
-    _scaffoldKey.currentState!.openEndDrawer();
+    widget._scaffoldKey.currentState!.openEndDrawer();
   }
-
-  // void _closeEndDrawer() {
-  //   Navigator.of(context).pop();
-  // }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //setState(() => initials = getInitials('Lana Del Rey'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      key: widget._scaffoldKey,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
             margin: const EdgeInsets.only(top: 25, left: 25, right: 25),

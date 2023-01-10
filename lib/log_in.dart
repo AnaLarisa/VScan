@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:toast/toast.dart';
-import 'package:vscan1/main.dart';
 
 import 'scan.dart';
 import 'sign_in.dart';
@@ -30,14 +29,15 @@ class _LogInPageState extends State<LogInPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
+            const Padding(
+              padding: EdgeInsets.only(top: 60.0),
               child: Center(
-                child: Container(
+                child: SizedBox(
                     width: 200,
-                    height: 400,
-                    child: const Center(
+                    height: 350,
+                    child: Center(
                       child: Text(
                         'VScan',
                         style: TextStyle(
@@ -51,7 +51,7 @@ class _LogInPageState extends State<LogInPage> {
             ),
             Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 controller: _emailController,
                 textInputAction: TextInputAction.next,
@@ -65,7 +65,7 @@ class _LogInPageState extends State<LogInPage> {
             ),
             Padding(
               padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 40),
+                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 40),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 controller: _passwordController,
@@ -84,7 +84,7 @@ class _LogInPageState extends State<LogInPage> {
               height: 50,
               width: 250,
               decoration: BoxDecoration(
-                  color: Color.fromRGBO(13, 31, 45, 1),
+                  color: const Color.fromRGBO(13, 31, 45, 1),
                   borderRadius: BorderRadius.circular(20)),
               child: TextButton(
                 onPressed: signIn,
