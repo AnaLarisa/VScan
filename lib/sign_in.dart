@@ -31,13 +31,14 @@ class _SignInPageState extends State<SignInPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Padding(
               padding: EdgeInsets.only(top: 60.0),
               child: Center(
                 child: SizedBox(
                     width: 200,
-                    height: 400,
+                    height: 350,
                     child: Center(
                       child: Text(
                         'VScan',
@@ -105,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
               child: TextButton(
                 onPressed: signUp,
                 child: const Text(
-                  'Înregistrează-te',
+                  'Înregistrare',
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
@@ -131,8 +132,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void showLogInErrorToastAndClearFields(
-      BuildContext context, String errorMessage) {
+  void showLogInErrorToastAndClearFields(BuildContext context, String errorMessage) {
     ToastContext().init(context);
     Toast.show(errorMessage, duration: Toast.lengthLong, gravity: Toast.bottom);
     _emailController.clear();

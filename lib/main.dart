@@ -8,8 +8,6 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  //await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-
   runApp(const MyApp());
 }
 
@@ -20,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'VScan',
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Montserrat'),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Cabin'),
       home: ScanPage(),
     );
   }

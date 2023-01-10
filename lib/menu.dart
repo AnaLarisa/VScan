@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +7,8 @@ import 'favourites.dart';
 import 'scan.dart';
 
 enum CurrentPage { account, favourites, scan, details }
-
 CurrentPage currentPage = CurrentPage.scan;
+
 
 @immutable
 class Menu extends StatefulWidget {
@@ -18,21 +16,21 @@ class Menu extends StatefulWidget {
     currentPage = actualCurrentPage;
   }
 
+
   @override
   MenuState createState() => MenuState();
 }
 
 class MenuState extends State<Menu> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: const Color.fromRGBO(13, 31, 45, 1),
       child: Column(
-        children: <Widget>[
+        children: const <Widget>[
           MyDrawerHeader(),
-          const MyDrawerList(),
+          MyDrawerList(),
         ],
       ),
     );
@@ -40,7 +38,7 @@ class MenuState extends State<Menu> {
 }
 
 class MyDrawerHeader extends StatefulWidget {
-  MyDrawerHeader({super.key});
+  const MyDrawerHeader({super.key});
 
   @override
   State<MyDrawerHeader> createState() => _MyDrawerHeaderState();
@@ -103,7 +101,7 @@ class MyDrawerList extends StatelessWidget {
             break;
           case CurrentPage.favourites:
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => const FavouritesPage()));
+                builder: (context) => FavouritesPage()));
             break;
           case CurrentPage.scan:
             Navigator.of(context).pushReplacement(
@@ -149,7 +147,7 @@ class MyDrawerList extends StatelessWidget {
             onTap: (() => goToPage(CurrentPage.scan)),
           ),
           const SizedBox(
-            height: 480,
+            height: 450,
           ),
           ListTile(
             leading: const Icon(
