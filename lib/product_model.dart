@@ -11,7 +11,11 @@ Future<String> translate(String text, String fromLanguage) async {
     var data = json.decode(response.body);
 
     return data["responseData"] != null &&
-            data["responseData"]["translatedText"] != null && !data["responseData"]["translatedText"].toString().toLowerCase().contains("query length limit exceeded")
+            data["responseData"]["translatedText"] != null &&
+            !data["responseData"]["translatedText"]
+                .toString()
+                .toLowerCase()
+                .contains("query length limit exceeded")
         ? data["responseData"]["translatedText"]
         : text;
   } else {
@@ -38,8 +42,8 @@ class Product {
     ingredients = await setIngredients();
     ingredientString = await setIngredientString();
     productImage = setProductImage();
-    vegan = setVegan();
-    ingredientsNotVegan = setIngredientsNotVegan();
+    ingredientsNotVegan = await setIngredientsNotVegan();
+    vegan = await setVegan();
     environmentalImpact = await setEnvironmentalImpact();
     nutriScore = setNutriScore();
   }
@@ -89,22 +93,22 @@ class Product {
         "";
   }
 
-  String setIngredientsNotVegan() {
+  Future<String> setIngredientsNotVegan() async {
     if (ingredients.isNotEmpty) {
-      var ingredientsNotVeganList =
-          ingredients.where((ingredient) => !isVegan(ingredient)).toList();
+      var ingredientsNotVeganList = ingredients
+          .where((ingredient) => isVegan(ingredient) == false)
+          .toList();
       return ingredientsNotVeganList.isNotEmpty
-          ? ingredientsNotVeganList
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
+          ? ingredientsNotVeganList.toString()
+          // .replaceAll('[', '')
+          // .replaceAll(']', '')
           : "Nu sunt specificate ingrediente de origine animală.";
     } else {
       return "Lista de ingrediente derivate din produse animale nu este disponibilă.";
     }
   }
 
-  bool setVegan() {
+  Future<bool> setVegan() async {
     return ingredientsNotVegan ==
                 "Lista de ingrediente derivate din produse animale nu este disponibilă." ||
             ingredientsNotVegan ==
