@@ -11,7 +11,7 @@ Future<String> translate(String text, String fromLanguage) async {
     var data = json.decode(response.body);
 
     return data["responseData"] != null &&
-            data["responseData"]["translatedText"] != null
+            data["responseData"]["translatedText"] != null && !data["responseData"]["translatedText"].toString().toLowerCase().contains("query length limit exceeded")
         ? data["responseData"]["translatedText"]
         : text;
   } else {
