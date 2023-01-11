@@ -7,8 +7,8 @@ import 'favourites.dart';
 import 'scan.dart';
 
 enum CurrentPage { account, favourites, scan, details }
-CurrentPage currentPage = CurrentPage.scan;
 
+CurrentPage currentPage = CurrentPage.details;
 
 @immutable
 class Menu extends StatefulWidget {
@@ -16,13 +16,11 @@ class Menu extends StatefulWidget {
     currentPage = actualCurrentPage;
   }
 
-
   @override
   MenuState createState() => MenuState();
 }
 
 class MenuState extends State<Menu> {
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -100,8 +98,8 @@ class MyDrawerList extends StatelessWidget {
 
             break;
           case CurrentPage.favourites:
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => FavouritesPage()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => FavouritesPage()));
             break;
           case CurrentPage.scan:
             Navigator.of(context).pushReplacement(

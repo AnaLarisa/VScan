@@ -1,16 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'menu.dart';
 import 'product_model.dart';
+import 'firestore_services.dart';
 
 class DetailsPage extends StatefulWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final String barcode;
 
-  DetailsPage(this.barcode, {Key? key /*, required this.username*/})
-      : super(key: key);
+  DetailsPage(this.barcode, {Key? key}) : super(key: key);
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -19,6 +21,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   Map<String, dynamic> data = {};
   Product product = Product();
+  bool addedToFavourites = false;
 
   void _openEndDrawer() {
     widget._scaffoldKey.currentState!.openEndDrawer();
@@ -55,7 +58,6 @@ class _DetailsPageState extends State<DetailsPage> {
       setState(() {
         data = result;
         getProduct(data).then((value) => product = value);
-        //_setProduct().then((value) => {product = value});
       });
     });
   }
@@ -67,6 +69,26 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    //final userEmail = FirebaseAuth.instance.currentUser!.email;
+
+    // ignore: non_constant_identifier_names
+    onClick_addToFavourites() {
+      if (user != null) {
+        if (addedToFavourites == false) {
+          addItemToFavourites(toJson(product), user.uid);
+          setState(() {
+            addedToFavourites = true;
+          });
+        } else {
+          removeItemFromFavourites(product.getBarcode(), user.uid);
+          setState(() {
+            addedToFavourites = false;
+          });
+        }
+      }
+    }
+
     return Scaffold(
       key: widget._scaffoldKey,
       body: SingleChildScrollView(
@@ -202,28 +224,62 @@ class _DetailsPageState extends State<DetailsPage> {
                 }
               } else {
                 // The image is still being loaded
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
                   ),
                 );
               }
             }),
       ),
-      floatingActionButton: SizedBox(
-        height: 60,
-        width: 60,
-        child: FloatingActionButton(
-            shape: const BeveledRectangleBorder(),
-            tooltip: 'Menu',
-            hoverElevation: 60,
-            backgroundColor: Colors.white,
-            foregroundColor: const Color.fromRGBO(13, 31, 45, 1),
-            onPressed: _openEndDrawer,
-            child: const Icon(
-              Icons.menu,
-              size: 60,
-            )),
+      floatingActionButton: Stack(
+        children: <Widget>[
+          user != null
+              ? Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 35, bottom: 8),
+                    child: FloatingActionButton(
+                      shape: const CircleBorder(),
+                      heroTag: 'Favourite',
+                      hoverElevation: 60,
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromRGBO(13, 31, 45, 1),
+                      onPressed: onClick_addToFavourites,
+                      child: Icon(
+                        addedToFavourites == true
+                            ? CupertinoIcons.heart_circle_fill
+                            : CupertinoIcons.heart_circle,
+                        color: const Color.fromRGBO(213, 122, 102, 1),
+                        size: 60,
+                      ),
+                    ),
+                  ),
+                )
+              : const Text(""),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SizedBox(
+              height: 60,
+              width: 60,
+              child: FloatingActionButton(
+                  shape: const BeveledRectangleBorder(),
+                  heroTag: 'Menu',
+                  hoverElevation: 60,
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromRGBO(13, 31, 45, 1),
+                  onPressed: _openEndDrawer,
+                  child: const Icon(
+                    Icons.menu,
+                    size: 60,
+                  )),
+            ),
+          ),
+        ],
       ),
       endDrawer: Menu(CurrentPage.details),
     );
@@ -244,6 +300,6 @@ Widget formatText(String title, String content) {
 Widget justBoldText(String text) {
   return Text(
     text,
-    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
   );
 }

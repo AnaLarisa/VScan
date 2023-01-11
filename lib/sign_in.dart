@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:toast/toast.dart';
+import 'package:vscan1/firestore_services.dart';
 import 'package:vscan1/scan.dart';
 
 import 'log_in.dart';
@@ -132,7 +133,8 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void showLogInErrorToastAndClearFields(BuildContext context, String errorMessage) {
+  void showLogInErrorToastAndClearFields(
+      BuildContext context, String errorMessage) {
     ToastContext().init(context);
     Toast.show(errorMessage, duration: Toast.lengthLong, gravity: Toast.bottom);
     _emailController.clear();
@@ -153,7 +155,8 @@ class _SignInPageState extends State<SignInPage> {
       password: _passwordController.text.trim(),
     )
         .then((value) {
-      Navigator.of(context)
+      addUser();
+      return Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => ScanPage()));
     }).catchError((error) {
       showLogInErrorToastAndClearFields(

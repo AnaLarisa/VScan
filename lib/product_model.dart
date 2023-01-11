@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'vegan_logic.dart';
@@ -128,6 +127,10 @@ class Product {
     }
     return "";
   }
+
+  String getBarcode() {
+    return data["code"] ?? "";
+  }
 }
 
 Future<Product> getProduct(Map<String, dynamic> dataParsed) async {
@@ -137,4 +140,19 @@ Future<Product> getProduct(Map<String, dynamic> dataParsed) async {
   await product.setFields();
 
   return product;
+}
+
+Map<String, String> toJson(Product product) {
+  return {
+    "barcode": product.getBarcode(),
+    "language": product.language,
+    "productName": product.productName,
+    "ingredients": jsonEncode(product.ingredients),
+    "ingredientString": product.ingredientString,
+    "productImage": product.productImage,
+    "vegan": jsonEncode(product.vegan),
+    "ingredientsNotVegan": jsonEncode(product.ingredientsNotVegan),
+    "environmentalImpact": product.environmentalImpact,
+    "nutriScore": product.nutriScore
+  };
 }
